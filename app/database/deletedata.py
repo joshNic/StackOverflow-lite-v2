@@ -1,5 +1,5 @@
 import psycopg2
-from config import config
+from .config import config
 
 
 def delete_user(user_id):

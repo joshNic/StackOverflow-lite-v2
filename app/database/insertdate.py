@@ -1,5 +1,5 @@
 import psycopg2
-from .config import config
+from config import config
 
 
 def insert_user(user_email, user_password, hash_password):
