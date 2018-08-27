@@ -42,4 +42,23 @@ def register_user():
 # user signin endpoint
 @app.route('/auth/login', methods=['GET'])
 def login_user():
-    pass
+    auth = request.authorization
+    if not auth or not auth.username or not auth.password:
+        return make_response('unauthorized accessss', 401, {'WWW-Authenticate': 
+        'Basic realm="Login required!"'})
+    user = user_actions_object.user_login(auth.username)
+    if not user:
+        return make_response('Could not verify', 401, {'WWW-Authenticate':
+                                                       'Basic realm="Login required!"'})
+    if check_password_hash(user[3], auth.password):
+        token = jwt.encode(
+            {
+                'user_id': user[0], 'exp' :datetime.datetime.utcnow() + datetime.timedelta(
+                    minutes=20
+                )
+            }, app.config['SECRET_KEY']
+        )
+        return jsonify({'token' : token.decode('UTF-8')})
+    return make_response('unauthorized access', 401, {'WWW-Authenticate':
+                                                      'Basic realm="Login required!"'})
+    
