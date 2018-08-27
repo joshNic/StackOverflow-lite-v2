@@ -1,9 +1,11 @@
 from .user import User
+from .question import Question
 from ..database.db_operations import DbOperations
 from werkzeug.security import generate_password_hash, check_password_hash
 
 userObject = User()
 databaseObject = DbOperations()
+questionObject = Question()
 
 class UserActions:
     
@@ -32,8 +34,14 @@ class UserActions:
         )
         return get_user
     
-    def create_question(self):
-        pass
+    def create_question(self, user_id, title, body):
+        userObject.user_id = user_id
+        questionObject.title = title
+        questionObject.body = body
+        insert_question = databaseObject.insert_question(
+            userObject.user_id, questionObject.title, questionObject.body
+        )
+        return insert_question
     
     def view_all_questions(self):
         pass

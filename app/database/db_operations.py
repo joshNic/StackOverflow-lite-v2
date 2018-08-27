@@ -33,7 +33,9 @@ class DbOperations:
         
     
     def insert_question(self, user_id, question_title, question_body):
-        pass
+        sql = """INSERT INTO questions(user_id, question_title, question_body)
+                VALUES(%s,%s, %s);"""
+        return db_connect.connect(sql, user_id, question_title, question_body)
     
     def upadte_question(self, question_title, question_body, question_id):
         pass

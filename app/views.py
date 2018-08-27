@@ -25,10 +25,12 @@ def token_required(f):
         
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = user_actions_object.get_user_by_id(data['user_id'])
+            current_use = user_actions_object.get_user_by_id(data['user_id'])
+            current_user = current_use[0]
         except:
             return jsonify({'message': 'Token is invalid'}), 401
         return f(current_user, *args, **kwargs)
+    return decorated
 
 # user signup endpoint
 @app.route('/auth/signup', methods=['POST'])
@@ -62,3 +64,26 @@ def login_user():
     return make_response('unauthorized access', 401, {'WWW-Authenticate':
                                                       'Basic realm="Login required!"'})
     
+# create creation endpoint
+@app.route('/api/v1/question', methods=['POST'])
+@token_required
+def post_question(current_user):
+    request_data = request.get_json()
+    # if not validate_question_object(request_data):
+    title = request_data['question_title']
+    body = request_data['question_body']
+    user_actions_object.create_question(current_user, title, body)
+    return jsonify({'message': 'question successfully created'}), 201
+
+def validate_question_object(request_object):
+    if not request_object:
+        return jsonify({'error': 'improper data format',
+                        'help - proper format': {
+                            'title': 'question title',
+                            'body': 'question boy'
+
+                        }}), 400
+    if 'title' not in request_object:
+        return jsonify({'error': 'please title is required'}), 400
+    if 'body' not in request_object:
+        return jsonify({'error': 'please body is required'}), 400
