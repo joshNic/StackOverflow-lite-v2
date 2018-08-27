@@ -1,12 +1,12 @@
 import psycopg2
-from config import config
+from .config import config
 
 
 class DbConnection:
     def __init__(self):
         self.conn = None
     
-    def connect(self, sql, *agrs):
+    def connect(self, sql, *command):
         """ Connect to the PostgreSQL database server """
         try:
             # read connection parameters
@@ -15,15 +15,12 @@ class DbConnection:
             self.conn = psycopg2.connect(**params)
             # create a cursor
             cur = self.conn.cursor()
-            cur.execute(sql, agrs)
+            cur.execute(sql, command)
             # close the communication with the PostgreSQL
-            cur.close()
+            # cur.close()
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-        finally:
-            exit()
-            
-    def exit(self):
-        if self.conn is not None:
-            return self.conn.close()
+        return cur
+        
+
