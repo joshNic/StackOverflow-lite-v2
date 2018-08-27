@@ -13,6 +13,23 @@ user_actions_object = UserActions()
 app = create_app()
 app.config['SECRET_KEY'] = 'secret123'
 
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        
+        if not token:
+            return jsonify({'message': 'Token is missing'}), 401
+        
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+            current_user = user_actions_object.get_user_by_id(data['user_id'])
+        except:
+            return jsonify({'message': 'Token is invalid'}), 401
+        return f(current_user, *args, **kwargs)
+
 # user signup endpoint
 @app.route('/auth/signup', methods=['POST'])
 def register_user():
