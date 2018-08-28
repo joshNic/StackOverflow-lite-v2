@@ -127,3 +127,9 @@ def update_question(question_id):
         user_actions_object.update_question(title, body, question_id)
     return jsonify({'message': 'Question successfully updated'}), 200
 
+# delete question endpoint
+@app.route('/api/v2/question/<int:question_id>', methods=['DELETE'])
+def delete_question(question_id):
+    user_actions_object.delete_question(question_id)
+    return jsonify({'message': 'Question successfully deleted'}), 200
+    

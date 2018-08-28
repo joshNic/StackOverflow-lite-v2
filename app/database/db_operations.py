@@ -45,6 +45,12 @@ class DbOperations:
             WHERE question_id = %s"""
         return db_connect.connect(sql, question_title, question_body, question_id)
     
+    def delete_question(self, question_id):
+        sql = """DELETE  FROM questions WHERE question_id=%s;"""
+        fetch = db_connect.connect(sql, question_id)
+        query = fetch.rowcount
+        return query
+    
     def show_questions(self):
         sql = """SELECT * FROM questions;"""
         fetch = db_connect.connect(sql, None)

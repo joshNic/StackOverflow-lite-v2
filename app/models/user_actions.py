@@ -58,4 +58,8 @@ class UserActions:
         )
         return update_question
     
+    def delete_question(self, question_id):
+        delete_question = databaseObject.delete_question(question_id)
+        return delete_question
+    
     
