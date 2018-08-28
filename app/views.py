@@ -107,15 +107,27 @@ def get_all():
 @app.route('/api/v2/question/<int:question_id>', methods=['GET'])
 def get_single_question(question_id):
     results = user_actions_object.view_single_question(question_id)
+    answers = user_actions_object.view_all_question_answers(question_id)
     container = []
+    answer_container = []
+    for result in answers:
+        a_obj = {
+            'answer_id':result[0],
+            'question_author_id': result[1],
+            'question_id': result[2],
+            'answer_body': result[3],
+            'answer_status': result[4]
+        }
+        answer_container.append(a_obj)
     q_obj = {
         'question_id': results[0],
         'question_author_id': results[1],
         'question_title': results[2],
-        'question_body': results[3]
+        'question_body': results[3],
+        'answers': answer_container
     }
     container.append(q_obj)
-    return jsonify({'Single Question': container}), 200
+    return jsonify(container), 200
 
 # update question endpoint
 @app.route('/api/v2/question/<int:question_id>', methods=['PUT'])

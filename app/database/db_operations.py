@@ -84,6 +84,13 @@ class DbOperations:
             WHERE answer_id = %s"""
         return db_connect.connect(sql, answer_id)
     
+    def get_question_answers(self, question_id):
+        sql = """SELECT * FROM answers WHERE question_id=%s;"""
+        query = db_connect.connect(
+            sql, question_id)
+        fetch = query.fetchall()
+        return fetch
+    
     def get_single_answer(self, answer_id):
         sql = """SELECT * FROM answers WHERE answer_id=%s;"""
         query = db_connect.connect(

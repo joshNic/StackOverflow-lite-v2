@@ -15,7 +15,7 @@ class UserActions:
         userObject.user_email = user_email
         userObject.user_password = user_password
         hash_password = generate_password_hash(userObject.user_password, method='sha256')
-        store_user = databaseObject.register_user(
+        databaseObject.register_user(
             userObject.user_email, userObject.user_password, hash_password
         )
         return {'message': 'user created'}
@@ -47,6 +47,9 @@ class UserActions:
     
     def view_all_questions(self):
         return databaseObject.show_questions()
+    
+    def view_all_question_answers(self, question_id):
+        return databaseObject.get_question_answers(question_id)
     
     def view_single_question(self, question_id):
         fetch_question = databaseObject.show_single_question(question_id)
