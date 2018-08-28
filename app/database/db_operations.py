@@ -37,11 +37,20 @@ class DbOperations:
                 VALUES(%s,%s, %s);"""
         return db_connect.connect(sql, user_id, question_title, question_body)
     
+
+    
     def show_questions(self):
         sql = """SELECT * FROM questions;"""
         fetch = db_connect.connect(sql, None)
         query = fetch.fetchall()
         return query
+    
+    def show_single_question(self, question_id):
+        sql = """SELECT * FROM questions WHERE question_id=%s;"""
+        query = db_connect.connect(
+            sql, question_id)
+        fetch = query.fetchone()
+        return fetch
     
 
 

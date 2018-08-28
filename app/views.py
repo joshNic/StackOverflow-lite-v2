@@ -103,3 +103,16 @@ def get_all():
         container.append(q_obj)
     return jsonify({'All Questions': container}), 200
 
+# get single questions endpoint
+@app.route('/api/v2/question/<int:question_id>', methods=['GET'])
+def get_single_question(question_id):
+    results = user_actions_object.view_single_question(question_id)
+    container = []
+    q_obj = {
+        'question_id': results[0],
+        'question_author_id': results[1],
+        'question_title': results[2],
+        'question_body': results[3]
+    }
+    container.append(q_obj)
+    return jsonify({'Single Question': container}), 200

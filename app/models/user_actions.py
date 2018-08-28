@@ -48,4 +48,8 @@ class UserActions:
     def view_all_questions(self):
         return databaseObject.show_questions()
     
+    def view_single_question(self, question_id):
+        fetch_question = databaseObject.show_single_question(question_id)
+        return fetch_question
+    
 
