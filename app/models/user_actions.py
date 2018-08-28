@@ -72,3 +72,18 @@ class UserActions:
         )
         return insert_answer
 
+    def delete_answer(self):
+        pass
+    def update_answer(self, answer_id, answer_body):
+        update_answer = databaseObject.update_answer(
+            answer_body, answer_id
+        )
+        return update_answer
+    
+    def update_answer_user(self, answer_id):
+        update_answer_user = databaseObject.update_answer_user(answer_id)
+        return update_answer_user
+    
+    def fetch_single_answer(self, answer_id):
+        fetchOne = databaseObject.get_single_answer(answer_id)
+        return fetchOne

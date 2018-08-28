@@ -146,3 +146,27 @@ def post_answer(current_user, question_id):
         return jsonify({'message': 'Answer successfully added'}), 201
     else:
         return jsonify({'message': 'Answer not added'}), 400
+
+# add update answer endpoint
+@app.route('/api/v2/question/<int:question_id>/answer/<int:answer_id>', methods=['PUT'])
+@token_required
+def upadte_answer(current_user, question_id, answer_id):
+    get_one_answer = user_actions_object.fetch_single_answer(answer_id)
+    get_one_question = user_actions_object.view_single_question(question_id)
+    if get_one_answer[1] == current_user:
+        request_data = request.get_json()
+        answer_body = request_data['answer_body']
+        update_answer = user_actions_object.update_answer(answer_id, answer_body)
+        if update_answer:
+            return jsonify({'message': 'Answer successfully update'}), 201
+        else:
+            return jsonify({'message': 'Answer not Updated'}), 400
+    
+    elif get_one_question[1] == current_user:
+        update_answer_user = user_actions_object.update_answer_user(answer_id)
+        if update_answer_user:
+            return jsonify({'message': 'Answer Accepted'}), 201
+        else:
+            return jsonify({'message': 'Answer not Updated'}), 400
+    else:
+        return jsonify({'message': 'You are not the author of the question or the answer'}), 401

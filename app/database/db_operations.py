@@ -70,4 +70,27 @@ class DbOperations:
                 VALUES(%s,%s, %s);"""
         return db_connect.connect(sql, user_id, question_id, answer_body)
     
+    def update_answer(self, answer_body, answer_id):
+        sql = """ UPDATE answers
+            SET 
+            answer_body = %s
+            WHERE answer_id = %s"""
+        return db_connect.connect(sql, answer_body, answer_id)
+    
+    def update_answer_user(self, answer_id):
+        sql = """ UPDATE answers
+            SET 
+            accepted = TRUE
+            WHERE answer_id = %s"""
+        return db_connect.connect(sql, answer_id)
+    
+    def get_single_answer(self, answer_id):
+        sql = """SELECT * FROM answers WHERE answer_id=%s;"""
+        query = db_connect.connect(
+            sql, answer_id)
+        fetch = query.fetchone()
+        return fetch
+    
+    def delete_answer(self, answer_id):
+        pass
 
