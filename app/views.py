@@ -116,3 +116,14 @@ def get_single_question(question_id):
     }
     container.append(q_obj)
     return jsonify({'Single Question': container}), 200
+
+# update question endpoint
+@app.route('/api/v2/question/<int:question_id>', methods=['PUT'])
+def update_question(question_id):
+    request_data = request.get_json()
+    if not validate_question_object(request_data):
+        title = request_data['question_title']
+        body = request_data['question_body']
+        user_actions_object.update_question(title, body, question_id)
+    return jsonify({'message': 'Question successfully updated'}), 200
+

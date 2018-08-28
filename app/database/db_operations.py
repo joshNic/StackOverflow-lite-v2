@@ -37,7 +37,13 @@ class DbOperations:
                 VALUES(%s,%s, %s);"""
         return db_connect.connect(sql, user_id, question_title, question_body)
     
-
+    def upadte_question(self, question_title, question_body, question_id):
+        sql = """ UPDATE questions
+            SET 
+            question_title = %s,
+            question_body = %s
+            WHERE question_id = %s"""
+        return db_connect.connect(sql, question_title, question_body, question_id)
     
     def show_questions(self):
         sql = """SELECT * FROM questions;"""

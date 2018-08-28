@@ -52,4 +52,10 @@ class UserActions:
         fetch_question = databaseObject.show_single_question(question_id)
         return fetch_question
     
-
+    def update_question(self, question_title, question_body, question_id):
+        update_question = databaseObject.upadte_question(
+            question_title, question_body, question_id
+        )
+        return update_question
+    
+    
