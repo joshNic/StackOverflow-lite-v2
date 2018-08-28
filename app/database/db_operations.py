@@ -37,24 +37,11 @@ class DbOperations:
                 VALUES(%s,%s, %s);"""
         return db_connect.connect(sql, user_id, question_title, question_body)
     
-    def upadte_question(self, question_title, question_body, question_id):
-        pass
-    
-    def delete_question(self, question_id):
-        pass
-    
     def show_questions(self):
-        pass
+        sql = """SELECT * FROM questions;"""
+        fetch = db_connect.connect(sql, None)
+        query = fetch.fetchall()
+        return query
     
-    def show_single_question(self, question_id):
-        pass
-    
-    def insert_answers(self, question_id, user_id):
-        pass
-    
-    def update_answer(self, answer_id):
-        pass
-    
-    def delete_answer(self, answer_id):
-        pass
+
 

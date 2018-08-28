@@ -20,6 +20,7 @@ def create_tables():
                 question_title VARCHAR(255) NOT NULL,
                 question_body VARCHAR(255) NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES users (user_id)
+                ON UPDATE CASCADE ON DELETE CASCADE
                 )
         """,
         """

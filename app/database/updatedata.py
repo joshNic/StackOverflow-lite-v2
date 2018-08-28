@@ -1,15 +1,13 @@
 import psycopg2
-from .config import config
+from config import config
 
 
-def update_user(user_email, user_password, hash_password, user_id):
+def update_user(status, answer_id):
     """ update user based on the user id """
-    sql = """ UPDATE users
+    sql = """ UPDATE answers
                 SET 
-                user_email = %s,
-                user_password = %s,
-                hash_password = %s
-                WHERE user_id = %s"""
+                accepted = %s
+                WHERE answer_id = %s"""
     conn = None
     try:
         # read database configuration
@@ -19,7 +17,7 @@ def update_user(user_email, user_password, hash_password, user_id):
         # create a new cursor
         cur = conn.cursor()
         # execute the UPDATE  statement
-        cur.execute(sql, (user_email, user_password, hash_password, user_id))
+        cur.execute(sql, (status, answer_id))
         # get the number of updated rows
         # updated_rows = cur.rowcount
         # Commit the changes to the database
@@ -34,4 +32,4 @@ def update_user(user_email, user_password, hash_password, user_id):
 
 
 if __name__ == '__main__':
-    update_user("256jo@gmail.com", "josh1234", "josh1234", 2)
+    update_user("True", 2)

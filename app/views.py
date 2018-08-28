@@ -33,7 +33,7 @@ def token_required(f):
     return decorated
 
 # user signup endpoint
-@app.route('/auth/signup', methods=['POST'])
+@app.route('/api/v2/auth/signup', methods=['POST'])
 def register_user():
     request_data = request.get_json()
     user_email = request_data['user_email']
@@ -42,7 +42,7 @@ def register_user():
     return jsonify(reg), 201
 
 # user signin endpoint
-@app.route('/auth/login', methods=['GET'])
+@app.route('/api/v2/auth/login', methods=['GET'])
 def login_user():
     auth = request.authorization
     if not auth or not auth.username or not auth.password:
@@ -64,26 +64,42 @@ def login_user():
     return make_response('unauthorized access', 401, {'WWW-Authenticate':
                                                       'Basic realm="Login required!"'})
     
-# create creation endpoint
-@app.route('/api/v1/question', methods=['POST'])
+# create question endpoint
+@app.route('/api/v2/question', methods=['POST'])
 @token_required
 def post_question(current_user):
     request_data = request.get_json()
-    # if not validate_question_object(request_data):
-    title = request_data['question_title']
-    body = request_data['question_body']
-    user_actions_object.create_question(current_user, title, body)
+    if not validate_question_object(request_data):
+        title = request_data['question_title']
+        body = request_data['question_body']
+        user_actions_object.create_question(current_user, title, body)
     return jsonify({'message': 'question successfully created'}), 201
 
 def validate_question_object(request_object):
     if not request_object:
         return jsonify({'error': 'improper data format',
                         'help - proper format': {
-                            'title': 'question title',
-                            'body': 'question boy'
+                            'question_title': 'question title',
+                            'question_body': 'question body'
 
                         }}), 400
-    if 'title' not in request_object:
+    if 'question_title' not in request_object:
         return jsonify({'error': 'please title is required'}), 400
-    if 'body' not in request_object:
+    if 'question_body' not in request_object:
         return jsonify({'error': 'please body is required'}), 400
+
+# get all questions endpoint
+@app.route('/api/v2/questions', methods=['GET'])
+def get_all():
+    results = user_actions_object.view_all_questions()
+    container = []
+    for result in results:
+        q_obj = {
+            'question_id':result[0],
+            'question_author_id': result[1],
+            'question_title': result[2],
+            'question_body': result[3]
+        }
+        container.append(q_obj)
+    return jsonify({'All Questions': container}), 200
+
