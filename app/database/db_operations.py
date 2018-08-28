@@ -64,5 +64,10 @@ class DbOperations:
         fetch = query.fetchone()
         return fetch
     
-
+    def insert_answers(self, answer_body, question_id, user_id):
+        """ insert a new user into the users table """
+        sql = """INSERT INTO answers(user_id, question_id, answer_body)
+                VALUES(%s,%s, %s);"""
+        return db_connect.connect(sql, user_id, question_id, answer_body)
+    
 

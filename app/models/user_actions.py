@@ -62,4 +62,13 @@ class UserActions:
         delete_question = databaseObject.delete_question(question_id)
         return delete_question
     
-    
+    def create_answer(self, user_id, question_id, answer_body):
+        answerObject.user_id = user_id
+        answerObject.question_id = question_id
+        answerObject.answer_body = answer_body
+
+        insert_answer = databaseObject.insert_answers(
+            answerObject.answer_body, answerObject.question_id, answerObject.user_id
+        )
+        return insert_answer
+

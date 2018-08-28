@@ -133,3 +133,16 @@ def delete_question(question_id):
     user_actions_object.delete_question(question_id)
     return jsonify({'message': 'Question successfully deleted'}), 200
     
+# add answer endpoint
+@app.route('/api/v2/question/<int:question_id>/answer', methods=['POST'])
+@token_required
+def post_answer(current_user, question_id):
+    request_data = request.get_json()
+    answer_body = request_data['answer_body']
+    create_answer = user_actions_object.create_answer(
+        current_user, question_id, answer_body
+    )
+    if create_answer:
+        return jsonify({'message': 'Answer successfully added'}), 201
+    else:
+        return jsonify({'message': 'Answer not added'}), 400
