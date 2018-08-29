@@ -22,5 +22,9 @@ class DbConnection:
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         return cur
-        
+    
+    def close(self):
+        self.connect(None, None).close()
+        self.conn.close()
+        return True
 

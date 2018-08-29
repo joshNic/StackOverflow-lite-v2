@@ -32,6 +32,19 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Resource not found'}), 404)
+
+def validate_answer_object(request_object):
+    if not request_object:
+        return jsonify({'error': 'improper data format',
+                        'help - proper format': {
+                            'answer_body': 'answer body'
+                        }}), 400
+    if 'answer_body' not in request_object:
+        return {'error': 'please answer can not be empty'}
+
 # user signup endpoint
 @app.route('/api/v2/auth/signup', methods=['POST'])
 def register_user():
