@@ -6,9 +6,12 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 import datetime
 from app import create_app
+import os
 from .models.user_actions import UserActions
 
-user_actions_object = UserActions()
+path = os.path.dirname(__file__)+'/database.ini'
+section = 'postgresql'
+user_actions_object = UserActions(path, section)
 
 app = create_app()
 app.config['SECRET_KEY'] = 'secret123'

@@ -1,7 +1,9 @@
+import os
 import psycopg2
 from .config import config
 
-
+path = os.path.dirname(__file__)+'/database.ini'
+section = 'postgresqltest'
 def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
@@ -41,7 +43,7 @@ def create_tables():
     conn = None
     try:
         # read the connection parameters
-        params = config()
+        params = config(path, section)
         # connect to the PostgreSQL server
         conn = psycopg2.connect(**params)
         cur = conn.cursor()

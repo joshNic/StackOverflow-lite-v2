@@ -3,16 +3,19 @@ from .config import config
 
 
 class DbConnection:
-    def __init__(self):
+    def __init__(self,path,section):
         self.conn = None
+        self.path = path
+        self.section = section
+        self.params = config(self.path, self.section)
     
-    def connect(self, sql, *command):
+    def connect(self,sql, *command):
         """ Connect to the PostgreSQL database server """
         try:
             # read connection parameters
-            params = config()
+            # params = config(self.path, self.section)
             # connect to the PostgreSQL server
-            self.conn = psycopg2.connect(**params)
+            self.conn = psycopg2.connect(**self.params)
             # create a cursor
             cur = self.conn.cursor()
             cur.execute(sql, command)
