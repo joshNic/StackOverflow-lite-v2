@@ -9,10 +9,10 @@ from app import create_app
 import os
 from .models.user_actions import UserActions
 
-path = os.path.dirname(__file__)+'/database.ini'
-section = 'postgresql'
+# path = os.path.dirname(__file__)+'/database.ini'
+# section = 'postgresql'
 
-user_actions_object = UserActions(path, section)
+user_actions_object = UserActions()
 
 app = create_app()
 app.config['SECRET_KEY'] = 'secret123'

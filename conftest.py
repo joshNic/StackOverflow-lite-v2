@@ -10,9 +10,9 @@ from instance.config import TestingConfig
 def app():
     app = create_app
     app.config.from_object(TestingConfig)
-    path = os.path.dirname(__file__)+'/databasetest.ini'
-    section = 'postgresqltest'
-    DbConnection(path, section)
+    # path = os.path.dirname(__file__)+'/databasetest.ini'
+    # section = 'postgresqltest'
+    # DbConnection(path, section)
     return app
 
 

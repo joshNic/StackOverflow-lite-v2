@@ -8,7 +8,7 @@ from app.database.db_connection import DbConnection
 def db_operations(scope="module"):
     path = os.path.dirname(__file__)+'/databasetest.ini'
     section = 'postgresqltest'
-    db_operations_object = DbOperations(path, section)
+    db_operations_object = DbOperations()
     yield db_operations_object
 
 
@@ -39,7 +39,7 @@ def test_fetch_user_name(db_operations):
 
 
 def test_fetch_user_by_id(db_operations):
-    user_id = 1
+    user_id = 5
     assert db_operations.fetch_user_by_id(user_id)
     assert isinstance(db_operations.fetch_user_by_id(
         user_id), tuple)
@@ -113,7 +113,7 @@ def test_get_question_answers(db_operations):
 
 
 def test_get_single_answer(db_operations):
-    answer_id = 24
+    answer_id = 5
     assert isinstance(db_operations.get_single_answer(answer_id), tuple)
     assert len(db_operations.get_single_answer(answer_id)) == 6
 

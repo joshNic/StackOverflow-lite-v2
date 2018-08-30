@@ -10,10 +10,8 @@ answerObject = Answer()
 
 
 class UserActions:
-    def __init__(self, path, section):
-        self.path = path
-        self.section = section
-        self.databaseObject = DbOperations(self.path, self.section)
+    def __init__(self):
+        self.databaseObject = DbOperations()
         # self.databaseObject.drop_tables()
         # self.databaseObject.create_tables()
 

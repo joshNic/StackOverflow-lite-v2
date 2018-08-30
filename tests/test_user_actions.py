@@ -7,7 +7,7 @@ from app.models.user_actions import UserActions
 def user_actions(scope="module"):
     path = os.path.dirname(__file__)+'/databasetest.ini'
     section = 'postgresqltest'
-    user_action_object = UserActions(path, section)
+    user_action_object = UserActions()
     yield user_action_object
 
 
@@ -24,7 +24,7 @@ def test_user_login(user_actions):
 
 
 def test_get_user_by_id(user_actions):
-    user_id = 1
+    user_id = 5
     assert user_actions.get_user_by_id(user_id)
     assert isinstance(user_actions.get_user_by_id(user_id), tuple)
 
@@ -50,14 +50,14 @@ def test_view_all_question_answers(user_actions):
 
 
 def test_view_single_question(user_actions):
-    question_id = 3
+    question_id = 5
     assert isinstance(
         user_actions.view_single_question(question_id), tuple)
     assert len(user_actions.view_single_question(question_id)) == 5
 
 
 def test_update_question(user_actions):
-    question_id = 3
+    question_id = 5
     question_body = "this was not"
     question_title = "Ofcos not for them"
     assert user_actions.update_question(
@@ -89,6 +89,6 @@ def test_update_answer_user(user_actions):
 
 
 def test_fetch_single_answer(user_actions):
-    answer_id = 24
+    answer_id = 5
     assert isinstance(user_actions.fetch_single_answer(answer_id), tuple)
     assert len(user_actions.fetch_single_answer(answer_id)) == 6

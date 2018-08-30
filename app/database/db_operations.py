@@ -5,10 +5,9 @@ from app import create_app
 
 
 class DbOperations:
-    def __init__(self, path, section):
-        self.path = path
-        self.section = section
-        self.db_connect = DbConnection(self.path, self.section)
+    def __init__(self):
+        
+        self.db_connect = DbConnection()
     def register_user(self, user_email, user_password, hash_password):
         """ insert a new user into the users table """
 
