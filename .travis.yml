@@ -1,6 +1,9 @@
 language: python
 python:
-  - "3.4"
+  - "3.6"
+
+global:
+  - APP_SETTING=testing
 
 # Service for postgre database
 services:
@@ -11,8 +14,7 @@ install:
   - pip install -r requirements.txt
 
 before_script:
-  - psql -c "CREATE DATABASE postgrestest;" -U postgres
-  - psql -c "CREATE USER postgres WITH PASSWORD '5y+2X=89';" -U postgres
+  - "psql -c 'CREATE DATABASE postgrestest;' -U postgres"
 
 # command to run tests
 script:
