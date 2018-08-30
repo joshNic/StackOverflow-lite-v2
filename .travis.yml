@@ -6,7 +6,6 @@ python:
 services:
   - postgresql 
 
-# command to install requirements
 env:
   global:
     - APP_SETTINGS=testing
