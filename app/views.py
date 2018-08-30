@@ -11,11 +11,11 @@ from .models.user_actions import UserActions
 
 path = os.path.dirname(__file__)+'/database.ini'
 section = 'postgresql'
+
 user_actions_object = UserActions(path, section)
 
 app = create_app()
 app.config['SECRET_KEY'] = 'secret123'
-
 
 def token_required(f):
     @wraps(f)
@@ -53,16 +53,23 @@ def validate_answer_object(request_object):
 
 @app.route('/api/v2/auth/signup', methods=['POST'])
 def register_user():
-    request_data = request.get_json()
-    user_email = request_data['user_email']
-    user_password = request_data['user_password']
-    if not validate_email(user_email):
-        user_actions_object.user_register(user_email, user_password)
-        return jsonify({'success': 'registered successfully'}), 201
-    else:
-        return validate_email(user_email)
+    if not request.json or not 'user_email' in request.json or not 'user_password' in request.json:
+        return jsonify({'error': 'invalid format'}), 400
+    user_email = request.json['user_email']
+    user_password = request.json['user_password']
+    user_actions_object.user_register(user_email, user_password)
+    return jsonify({'success': 'registered successfully'}), 201
+    # request_data = request.json
+    # if not validate_question_object(request_data):
+    #     user_email = request_data['user_email']
+    #     user_password = request_data['user_password']
+    #     if not validate_email(user_email):
+    #         user_actions_object.user_register(user_email, user_password)
+    #         return jsonify({'success': 'registered successfully'}), 201
+    #     else:
+    #         return validate_email(user_email)
 
-# user signin endpoint
+    # return jsonify({'error': 'Invalid format'}), 400
 
 
 @app.route('/api/v2/auth/login', methods=['GET'])
@@ -79,7 +86,7 @@ def login_user():
         token = jwt.encode(
             {
                 'user_id': user[0], 'exp': datetime.datetime.utcnow() + datetime.timedelta(
-                    minutes=20
+                    hours=48
                 )
             }, app.config['SECRET_KEY']
         )
@@ -101,13 +108,14 @@ def post_question(current_user):
             return jsonify({'error': 'question title too short'}), 400
         elif title.isdigit():
             return jsonify({'error': 'question can not contain only numbers'}), 400
-    
+
         check_duplicate_title = user_actions_object.get_title(title)
         if check_duplicate_title > 0:
             return jsonify({'message': 'question already asked'}), 409
         user_actions_object.create_question(current_user, title, body)
         return jsonify({'message': 'question successfully created'}), 201
     return jsonify({'error': 'question not created'}), 400
+
 
 def validate_question_object(request_object):
     if not request_object:
@@ -190,8 +198,8 @@ def update_question(current_user, question_id):
             elif not validate_question_object(request_data):
                 user_actions_object.update_question(title, body, question_id)
                 return jsonify({'message': 'Question successfully updated'}), 200
-            
-        return jsonify({'message': 'You are not the owner of the question'}), 
+
+        return jsonify({'message': 'You are not the owner of the question'}),
     return jsonify({'message': 'Question does not exist'}), 404
 
 # delete question endpoint
@@ -215,15 +223,18 @@ def delete_question(current_user, question_id):
 @app.route('/api/v2/question/<int:question_id>/answer', methods=['POST'])
 @token_required
 def post_answer(current_user, question_id):
-    request_data = request.get_json()
-    answer_body = request_data['answer_body']
-    create_answer = user_actions_object.create_answer(
-        current_user, question_id, answer_body
-    )
-    if create_answer:
-        return jsonify({'message': 'Answer successfully added'}), 201
-    else:
-        return jsonify({'message': 'Answer not added'}), 400
+    get_one_question = user_actions_object.view_single_question(question_id)
+    if get_one_question:
+        request_data = request.get_json()
+        answer_body = request_data['answer_body']
+        create_answer = user_actions_object.create_answer(
+            current_user, question_id, answer_body
+        )
+        if create_answer:
+            return jsonify({'message': 'Answer successfully added'}), 201
+        else:
+            return jsonify({'message': 'Answer not added'}), 400
+    return jsonify({'message': 'Question does not exist'}), 404
 
 # add update answer endpoint
 
@@ -233,7 +244,16 @@ def post_answer(current_user, question_id):
 def upadte_answer(current_user, question_id, answer_id):
     get_one_answer = user_actions_object.fetch_single_answer(answer_id)
     get_one_question = user_actions_object.view_single_question(question_id)
-    if get_one_answer[1] == current_user:
+
+    if get_one_question[1] == current_user:
+        update_answer_user = user_actions_object.update_answer_user(
+            answer_id)
+        if update_answer_user:
+            return jsonify({'message': 'Answer Accepted'}), 201
+        else:
+            return jsonify({'message': 'Answer not Updated'}), 400
+
+    elif get_one_answer[1] == current_user:
         request_data = request.get_json()
         answer_body = request_data['answer_body']
         update_answer = user_actions_object.update_answer(
@@ -242,15 +262,7 @@ def upadte_answer(current_user, question_id, answer_id):
             return jsonify({'message': 'Answer successfully update'}), 201
         else:
             return jsonify({'message': 'Answer not Updated'}), 400
-
-    elif get_one_question[1] == current_user:
-        update_answer_user = user_actions_object.update_answer_user(answer_id)
-        if update_answer_user:
-            return jsonify({'message': 'Answer Accepted'}), 201
-        else:
-            return jsonify({'message': 'Answer not Updated'}), 400
-    else:
-        return jsonify({'message': 'You are not the author of the question or the answer'}), 401
+    return jsonify({'message': 'You are not the author of the question or the answer'}), 401
 
 
 def validate_email(user_email):
@@ -287,7 +299,7 @@ def validate_email(user_email):
 
 #     # if check_duplicate_title > 0:
 #     #     return jsonify({'message': 'question already asked'}), 409
-    
+
 #     if len(question_title) < 6:
 #         return jsonify({'error': 'question title can not be less than six\
 #             characters'}), 400
@@ -295,4 +307,10 @@ def validate_email(user_email):
 #         return jsonify({'error': 'question format not allowed\
 #         an email can not only have numbers'}), 400
 
-
+# def validate_question_object(request_object):
+#     if not request_object:
+#         abort(400)
+#     if 'question_title' not in request_object:
+#         return {'error': 'please title is required'}
+#     if 'question_body' not in request_object:
+#         return {'error': 'please body is required'}

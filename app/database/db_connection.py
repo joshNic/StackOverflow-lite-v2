@@ -1,10 +1,12 @@
 import psycopg2
 from .config import config
+import os
 
 
 class DbConnection:
     def __init__(self,path,section):
-        self.conn = None
+        if os.getenv('APP_Config') == 'testing':
+            self.conn = None
         self.path = path
         self.section = section
         self.params = config(self.path, self.section)
