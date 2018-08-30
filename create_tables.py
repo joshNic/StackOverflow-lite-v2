@@ -2,7 +2,7 @@ import os
 import psycopg2
 from app.database.config import config
 
-path = os.path.dirname(__file__)+'/database.ini'
+path = os.path.dirname(__file__)+'/databasetest.ini'
 section = 'postgresqltest'
 def create_tables():
     """ create tables in the PostgreSQL database"""
