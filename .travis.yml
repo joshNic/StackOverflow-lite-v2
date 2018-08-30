@@ -7,15 +7,16 @@ services:
   - postgresql 
 
 # command to install requirements
-install:
-  - pip install -r requirements.txt
+env:
+  global:
+    - APP_SETTINGS=testing
 
 # command to run tests
 script:
   - py.test --cov-report term --cov=app
   - coverage report
 before_script:
-  - psql -c 'create database postgres;' -U postgres
+  - pip install -r requirements.txt
   - psql -c 'create database postgrestest;' -U postgres
   - python create_tables.py
 after_success:
