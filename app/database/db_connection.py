@@ -7,7 +7,7 @@ class DbConnection:
     def __init__(self):
         self.conn = None
         if os.getenv('APP_Config') == 'testing':
-            self.database = 'postgresqltest'
+            self.database = 'postgrestest'
         else:
             self.database = 'postgres'
     def connect(self,sql, *command):
