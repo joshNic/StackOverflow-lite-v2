@@ -14,7 +14,7 @@ section = 'postgresql'
 user_actions_object = UserActions(path, section)
 
 app = create_app()
-app.config['SECRET_KEY'] = 'thismustbesecrete'
+app.config['SECRET_KEY'] = 'secret123'
 
 
 def token_required(f):
@@ -96,15 +96,9 @@ def post_question(current_user):
     request_data = request.get_json()
     title = request_data['question_title']
     body = request_data['question_body']
-    if not validate_question_object(request_data) and not validate_question(title):
+    if not validate_question_object(request_data):
         user_actions_object.create_question(current_user, title, body)
         return jsonify({'message': 'question successfully created'}), 201
-    else:
-        check = {
-            'status': validate_question_object(request_data),
-            'status': validate_question(title)
-        }
-        return jsonify({'check_status': check})
 
 def validate_question_object(request_object):
     if not request_object:
@@ -175,15 +169,9 @@ def update_question(current_user, question_id):
     title = request_data['question_title']
     body = request_data['question_body']
     if get_one_question[1] == current_user:
-        if not validate_question_object(request_data) and not validate_question(title):
+        if not validate_question_object(request_data):
             user_actions_object.update_question(title, body, question_id)
             return jsonify({'message': 'Question successfully updated'}), 200
-        else:
-            check = {
-                'status': validate_question_object(request_data),
-                'status': validate_question(title)
-            }
-            return jsonify({'check_status': check})
     else:
         return jsonify({'message': 'You are not the owner of the question'}), 401
 
@@ -273,12 +261,12 @@ def validate_email(user_email):
 
 
 def validate_question(question_title):
-    check_duplicate_title = user_actions_object.get_user_name(question_title)
+    check_duplicate_title = user_actions_object.get_title(question_title)
 
-    if len(check_duplicate_title) > 0:
-        return jsonify({'message': 'question already asked',
-        'goto': check_duplicate_title[2]}), 409
-    elif len(question_title) < 6:
+    # if check_duplicate_title > 0:
+    #     return jsonify({'message': 'question already asked',
+    #     'goto': check_duplicate_title[2]}), 409
+    if len(question_title) < 6:
         return jsonify({'error': 'question title can not be less than six\
             characters'}), 400
     elif question_title.isdigit():

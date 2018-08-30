@@ -110,4 +110,8 @@ class UserActions:
     def get_question_title(self, question_title):
         fetch = self.databaseObject.fetch_question_title(question_title)
         return fetch
+
+    def get_title(self, question_title):
+        fetch = self.databaseObject.question_title(question_title)
+        return fetch
     
