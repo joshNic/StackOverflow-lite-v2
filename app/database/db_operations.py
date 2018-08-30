@@ -37,16 +37,17 @@ class DbOperations:
         return query
     
     def fetch_question_title(self, question_title):
+        fetc = self.query_title(question_title)
+        return fetc.fetchone()
+    
+    def query_title(self, question_title):
         sql = """SELECT * FROM questions WHERE question_title=%s;"""
         query = self.db_connect.connect(sql, question_title)
-        fetch = query.fetchone()
-        return fetch
+        return query
     
     def question_title(self, question_title):
-        sql = """SELECT * FROM questions WHERE question_title=%s;"""
-        query = self.db_connect.connect(sql, question_title)
-        fetch = query.rowcount
-        return fetch
+        fetch = self.query_title(question_title)
+        return fetch.rowcount
     
     def fetch_user_by_id(self, user_id):
         sql = """SELECT * FROM users WHERE user_id=%s;"""

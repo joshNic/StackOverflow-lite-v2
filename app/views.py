@@ -1,5 +1,5 @@
 from flask import (
-    Flask, jsonify, make_response, redirect, json, Response, request
+    Flask, jsonify, make_response, redirect, json, Response, request, abort
 )
 import jwt
 from functools import wraps
@@ -97,8 +97,17 @@ def post_question(current_user):
     title = request_data['question_title']
     body = request_data['question_body']
     if not validate_question_object(request_data):
+        if len(title) < 6:
+            return jsonify({'error': 'question title too short'}), 400
+        elif title.isdigit():
+            return jsonify({'error': 'question can not contain only numbers'}), 400
+    
+        check_duplicate_title = user_actions_object.get_title(title)
+        if check_duplicate_title > 0:
+            return jsonify({'message': 'question already asked'}), 409
         user_actions_object.create_question(current_user, title, body)
         return jsonify({'message': 'question successfully created'}), 201
+    return jsonify({'error': 'question not created'}), 400
 
 def validate_question_object(request_object):
     if not request_object:
@@ -120,15 +129,17 @@ def validate_question_object(request_object):
 def get_all():
     results = user_actions_object.view_all_questions()
     container = []
-    for result in results:
-        q_obj = {
-            'question_id': result[0],
-            'question_author_id': result[1],
-            'question_title': result[2],
-            'question_body': result[3]
-        }
-        container.append(q_obj)
-    return jsonify({'All Questions': container}), 200
+    if len(results) > 0:
+        for result in results:
+            q_obj = {
+                'question_id': result[0],
+                'question_author_id': result[1],
+                'question_title': result[2],
+                'question_body': result[3]
+            }
+            container.append(q_obj)
+        return jsonify({'All Questions': container}), 200
+    return jsonify({'messages': 'No questions on the platform yet'}), 200
 
 # get single questions endpoint
 
@@ -136,27 +147,29 @@ def get_all():
 @app.route('/api/v2/question/<int:question_id>', methods=['GET'])
 def get_single_question(question_id):
     results = user_actions_object.view_single_question(question_id)
-    answers = user_actions_object.view_all_question_answers(question_id)
-    container = []
-    answer_container = []
-    for result in answers:
-        a_obj = {
-            'answer_id': result[0],
-            'question_author_id': result[1],
-            'question_id': result[2],
-            'answer_body': result[3],
-            'answer_status': result[4]
+    if results:
+        answers = user_actions_object.view_all_question_answers(question_id)
+        container = []
+        answer_container = []
+        for result in answers:
+            a_obj = {
+                'answer_id': result[0],
+                'question_author_id': result[1],
+                'question_id': result[2],
+                'answer_body': result[3],
+                'answer_status': result[4]
+            }
+            answer_container.append(a_obj)
+        q_obj = {
+            'question_id': results[0],
+            'question_author_id': results[1],
+            'question_title': results[2],
+            'question_body': results[3],
+            'answers': answer_container
         }
-        answer_container.append(a_obj)
-    q_obj = {
-        'question_id': results[0],
-        'question_author_id': results[1],
-        'question_title': results[2],
-        'question_body': results[3],
-        'answers': answer_container
-    }
-    container.append(q_obj)
-    return jsonify(container), 200
+        container.append(q_obj)
+        return jsonify(container), 200
+    return jsonify({'message': 'Questions does not exist'}), 404
 
 # update question endpoint
 
@@ -165,15 +178,21 @@ def get_single_question(question_id):
 @token_required
 def update_question(current_user, question_id):
     get_one_question = user_actions_object.view_single_question(question_id)
-    request_data = request.get_json()
-    title = request_data['question_title']
-    body = request_data['question_body']
-    if get_one_question[1] == current_user:
-        if not validate_question_object(request_data):
-            user_actions_object.update_question(title, body, question_id)
-            return jsonify({'message': 'Question successfully updated'}), 200
-    else:
-        return jsonify({'message': 'You are not the owner of the question'}), 401
+    if get_one_question:
+        if get_one_question[1] == current_user:
+            request_data = request.get_json()
+            title = request_data['question_title']
+            body = request_data['question_body']
+            if len(title) < 6:
+                return jsonify({'error': 'question title too short'}), 400
+            elif title.isdigit():
+                return jsonify({'error': 'question can not contain only numbers'}), 400
+            elif not validate_question_object(request_data):
+                user_actions_object.update_question(title, body, question_id)
+                return jsonify({'message': 'Question successfully updated'}), 200
+            
+        return jsonify({'message': 'You are not the owner of the question'}), 
+    return jsonify({'message': 'Question does not exist'}), 404
 
 # delete question endpoint
 
@@ -182,10 +201,12 @@ def update_question(current_user, question_id):
 @token_required
 def delete_question(current_user, question_id):
     get_one_question = user_actions_object.view_single_question(question_id)
-    if get_one_question[1] == current_user:
-        user_actions_object.delete_question(question_id)
-        return jsonify({'message': 'Question successfully deleted'}), 200
-    return jsonify({'error': 'You are not the owner of the question'}), 401
+    if get_one_question:
+        if get_one_question[1] == current_user:
+            user_actions_object.delete_question(question_id)
+            return jsonify({'message': 'Question successfully deleted'}), 200
+        return jsonify({'error': 'You are not the owner of the question'}), 401
+    return jsonify({'message': 'question does not exist'}), 400
 
 
 # add answer endpoint
@@ -260,17 +281,18 @@ def validate_email(user_email):
         an email must not start with @ or . character next to each other'}), 400
 
 
-def validate_question(question_title):
-    check_duplicate_title = user_actions_object.get_title(question_title)
+# def validate_question(question_title):
+#     # check_duplicate_title = user_actions_object.get_title(
+#     #     question_title)
 
-    # if check_duplicate_title > 0:
-    #     return jsonify({'message': 'question already asked',
-    #     'goto': check_duplicate_title[2]}), 409
-    if len(question_title) < 6:
-        return jsonify({'error': 'question title can not be less than six\
-            characters'}), 400
-    elif question_title.isdigit():
-        return jsonify({'error': 'question format not allowed\
-        an email can not only have numbers'}), 400
+#     # if check_duplicate_title > 0:
+#     #     return jsonify({'message': 'question already asked'}), 409
+    
+#     if len(question_title) < 6:
+#         return jsonify({'error': 'question title can not be less than six\
+#             characters'}), 400
+#     elif question_title.isdigit():
+#         return jsonify({'error': 'question format not allowed\
+#         an email can not only have numbers'}), 400
 
 
