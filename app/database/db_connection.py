@@ -30,4 +30,4 @@ class DbConnection:
         self.connect(None, None).close()
         self.conn.close()
         return True
-
+    

@@ -9,7 +9,6 @@ class DbOperations:
         self.path = path
         self.section = section
         self.db_connect = DbConnection(self.path, self.section)
-
     def register_user(self, user_email, user_password, hash_password):
         """ insert a new user into the users table """
 
@@ -25,8 +24,21 @@ class DbOperations:
         return fetch
 
     def fetch_user_name(self, user_email):
+        query = self.query_user_name(user_email)
+        return query.fetchone()
+    
+    def fetch_user(self, user_email):
+        query = self.query_user_name(user_email)
+        return query.rowcount
+    
+    def query_user_name(self, user_email):
         sql = """SELECT * FROM users WHERE user_email=%s;"""
         query = self.db_connect.connect(sql, user_email)
+        return query
+    
+    def fetch_question_title(self, question_title):
+        sql = """SELECT * FROM questions WHERE question_title=%s;"""
+        query = self.db_connect.connect(sql, question_title)
         fetch = query.fetchone()
         return fetch
     
@@ -105,5 +117,53 @@ class DbOperations:
         return fetch
     
     def delete_answer(self, answer_id):
-        pass
-
+        sql = """DELETE  FROM answers WHERE answer_id=%s;"""
+        fetch = self.db_connect.connect(sql, answer_id)
+        query = fetch.rowcount
+        return query
+    
+    def create_tables(self):
+        """ create tables in the PostgreSQL database"""
+        commands = (
+            """
+        CREATE TABLE IF NOT EXISTS users (
+            user_id SERIAL PRIMARY KEY,
+            user_email VARCHAR(255) NOT NULL,
+            user_password VARCHAR(255) NOT NULL,
+            hash_password VARCHAR(255) NULL
+        )
+        """,
+            """ 
+        CREATE TABLE IF NOT EXISTS questions (
+                question_id SERIAL PRIMARY KEY,
+                user_id INTEGER,
+                question_title VARCHAR(255) NOT NULL,
+                question_body VARCHAR(255) NOT NULL,
+                created_at timestamp DEFAULT current_timestamp,
+                FOREIGN KEY (user_id) REFERENCES users (user_id)
+                ON UPDATE CASCADE ON DELETE CASCADE
+                )
+        """,
+            """
+        CREATE TABLE IF NOT EXISTS answers (
+                answer_id SERIAL PRIMARY KEY,
+                user_id INTEGER,
+                question_id INTEGER,
+                answer_body VARCHAR(255) NOT NULL,
+                accepted BOOLEAN NOT NULL,
+                created_at timestamp DEFAULT current_timestamp,
+                FOREIGN KEY (user_id) REFERENCES users (user_id)
+                ON UPDATE CASCADE ON DELETE CASCADE,
+                FOREIGN KEY (question_id) REFERENCES questions (question_id)
+                ON UPDATE CASCADE ON DELETE CASCADE
+        )
+        """
+        )
+        for command in commands:
+            self.db_connect.connect(None, command)
+        return True
+    
+    def drop_tables(self):
+        sql = ("""DROP TABLE IF EXISTS users, questions, answers""")
+        self.db_connect.connect(sql, None)
+        return True 

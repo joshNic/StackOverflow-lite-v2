@@ -1,6 +1,6 @@
 import os
 import psycopg2
-from .config import config
+from config import config
 
 path = os.path.dirname(__file__)+'/database.ini'
 section = 'postgresqltest'
@@ -8,7 +8,7 @@ def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
         """
-        CREATE TABLE users (
+        CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
             user_email VARCHAR(255) NOT NULL,
             user_password VARCHAR(255) NOT NULL,
@@ -16,23 +16,24 @@ def create_tables():
         )
         """,
         """ 
-        CREATE TABLE questions (
+        CREATE TABLE IF NOT EXISTS questions (
                 question_id SERIAL PRIMARY KEY,
                 user_id INTEGER,
-                question_title VARCHAR(255) NOT NULL,
-                question_body VARCHAR(255) NOT NULL,
+                question_title TEXT NOT NULL,
+                question_body TEXT NOT NULL,
+                created_at timestamp DEFAULT current_timestamp,
                 FOREIGN KEY (user_id) REFERENCES users (user_id)
                 ON UPDATE CASCADE ON DELETE CASCADE
                 )
         """,
         """
-        CREATE TABLE answers (
+        CREATE TABLE IF NOT EXISTS answers (
                 answer_id SERIAL PRIMARY KEY,
                 user_id INTEGER,
                 question_id INTEGER,
-                answer_body VARCHAR(255) NOT NULL,
-                accepted BOOLEAN NOT NULL,
-                question_body VARCHAR(255) NOT NULL,
+                answer_body TEXT NOT NULL,
+                accepted BOOLEAN NOT NULL DEFAULT FALSE,
+                created_at timestamp DEFAULT current_timestamp,
                 FOREIGN KEY (user_id) REFERENCES users (user_id)
                 ON UPDATE CASCADE ON DELETE CASCADE,
                 FOREIGN KEY (question_id) REFERENCES questions (question_id)
