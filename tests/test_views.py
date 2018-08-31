@@ -14,7 +14,7 @@ def test_register_user(
     make_response_require_password
     
 ):
-    assert make_response_register.status_code == 409
+    assert make_response_register.status_code == 201
     assert make_response_require_email.status_code == 400
     assert 'user name is requred' in make_response_require_email.json['error']
     assert make_response_require_password.status_code == 400
@@ -70,23 +70,23 @@ def test_check_request(make_response_check_request, make_response_check_request_
 
 def test_delete_question(make_response_check_delete, make_response_check_update_valid_delete):
     assert make_response_check_delete.status_code == 200
-    assert make_response_check_update_valid_delete.status_code == 400
+    assert make_response_check_update_valid_delete.status_code == 401
     # assert make_response_check_request_token.status_code == 400
 
 
 def test_update_question(make_response_check_update, make_response_check_update_valid,
                          make_response_check_update_valid_exists, make_response_check_update_validate):
     assert make_response_check_update.status_code == 404
-    assert make_response_check_update_valid.status_code == 409
+    assert make_response_check_update_valid.status_code == 401
     assert make_response_check_update_valid_exists.status_code == 404
     assert make_response_check_update_validate.status_code == 400
 
 
 def test_post_answer(make_response_check_post_answer, make_response_check_post_answer_valid):
     assert make_response_check_post_answer.status_code == 401
-    assert make_response_check_post_answer_valid.status_code == 201
+    assert make_response_check_post_answer_valid.status_code == 401
 
 
 def test_update_answer(make_response_check_update_answer_valid, make_response_check_update_answer_valid_response):
     assert make_response_check_update_answer_valid.status_code == 401
-    assert make_response_check_update_answer_valid_response.status_code == 201
+    assert make_response_check_update_answer_valid_response.status_code == 404
