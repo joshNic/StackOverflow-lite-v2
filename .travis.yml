@@ -1,12 +1,13 @@
 language: python
 python:
   - "3.6"
+env:
+  global:
+    - APP_Config=testing
 
 # Service for postgre database
 services:
   - postgresql 
-
-
 
 # command to run tests
 script:

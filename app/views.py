@@ -244,24 +244,26 @@ def upadte_answer(current_user, question_id, answer_id):
     get_one_question = user_actions_object.view_single_question(question_id)
 
     
-
-    if get_one_answer[1] == current_user:
-        if not check_answer_request():
-            answer_body = request.json['answer_body']
-            update_answer = user_actions_object.update_answer(
-                answer_id, answer_body)
-            if update_answer:
-                return jsonify({'message': 'Answer successfully update'}), 201
+    try:
+        if get_one_answer[1] == current_user:
+            if not check_answer_request():
+                answer_body = request.json['answer_body']
+                update_answer = user_actions_object.update_answer(
+                    answer_id, answer_body)
+                if update_answer:
+                    return jsonify({'message': 'Answer successfully update'}), 201
+                else:
+                    return jsonify({'message': 'Answer not Updated'}), 400
+            return check_answer_request()
+        elif get_one_question[1] == current_user:
+            update_answer_user = user_actions_object.update_answer_user(
+                answer_id)
+            if update_answer_user:
+                return jsonify({'message': 'Answer Accepted'}), 201
             else:
                 return jsonify({'message': 'Answer not Updated'}), 400
-        return check_answer_request()
-    elif get_one_question[1] == current_user:
-        update_answer_user = user_actions_object.update_answer_user(
-            answer_id)
-        if update_answer_user:
-            return jsonify({'message': 'Answer Accepted'}), 201
-        else:
-            return jsonify({'message': 'Answer not Updated'}), 400
+    except:
+        return jsonify({'error': 'Resource not found'}), 404
     return jsonify({'message': 'You are not the author of the question or the answer'}), 401
 
 
