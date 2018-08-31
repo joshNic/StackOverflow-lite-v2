@@ -8,7 +8,7 @@ services:
 
 env:
   global:
-    - APP_SETTINGS=testing
+    - APP_Config=testing
 
 # command to run tests
 script:
@@ -16,7 +16,7 @@ script:
   - coverage report
 before_script:
   - pip install -r requirements.txt
-  - psql -c 'create database postgres;' -U postgres
+  - psql -c 'create database postgrestest;' -U postgres
   - python create_tables.py
 after_success:
 - coveralls

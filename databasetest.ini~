@@ -1,6 +1,6 @@
 [postgresql]
 host=localhost
-database=postgrestest
+database=postgres
 user=postgres
 password=5y+2X=89
 [postgresqltest]

@@ -6,8 +6,6 @@ from app.database.db_connection import DbConnection
 
 @pytest.fixture
 def db_operations(scope="module"):
-    path = os.path.dirname(__file__)+'/databasetest.ini'
-    section = 'postgresqltest'
     db_operations_object = DbOperations()
     yield db_operations_object
 
@@ -114,8 +112,8 @@ def test_get_question_answers(db_operations):
 
 def test_get_single_answer(db_operations):
     answer_id = 5
-    assert isinstance(db_operations.get_single_answer(answer_id), tuple)
-    assert len(db_operations.get_single_answer(answer_id)) == 6
+    assert  isinstance(db_operations.get_single_answer(answer_id), tuple)
+    
 
 
 def test_delete_answer(db_operations):

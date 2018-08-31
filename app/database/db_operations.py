@@ -8,6 +8,8 @@ class DbOperations:
     def __init__(self):
         
         self.db_connect = DbConnection()
+        # self.drop_tables()
+        # self.create_tables()
     def register_user(self, user_email, user_password, hash_password):
         """ insert a new user into the users table """
 
