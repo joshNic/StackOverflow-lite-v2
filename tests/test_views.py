@@ -78,7 +78,7 @@ def test_update_question(make_response_check_update, make_response_check_update_
                          make_response_check_update_valid_exists, make_response_check_update_validate):
     assert make_response_check_update.status_code == 404
     assert make_response_check_update_valid.status_code == 401
-    assert make_response_check_update_valid_exists.status_code == 404
+    assert make_response_check_update_valid_exists.status_code == 401
     assert make_response_check_update_validate.status_code == 400
 
 
