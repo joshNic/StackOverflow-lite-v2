@@ -53,7 +53,7 @@ def test_view_single_question(user_actions):
     question_id = 5
     assert not isinstance(
         user_actions.view_single_question(question_id), tuple)
-    assert user_actions.view_single_question(question_id) == 5
+    assert user_actions.view_single_question(question_id) == None
 
 
 def test_update_question(user_actions):
@@ -91,4 +91,4 @@ def test_update_answer_user(user_actions):
 def test_fetch_single_answer(user_actions):
     answer_id = 5
     assert isinstance(user_actions.fetch_single_answer(answer_id), tuple)
-    assert len(user_actions.fetch_single_answer(answer_id)) == 6
+    assert len(user_actions.fetch_single_answer(answer_id)) == None
