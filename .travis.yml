@@ -14,6 +14,7 @@ script:
   - coverage report
 before_script:
   - pip install -r requirements.txt
+  - psql -c 'create database postgrestest;' -U postgres
   - python create_tables.py
 after_success:
 - coveralls
