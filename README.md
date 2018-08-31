@@ -1,6 +1,7 @@
 # StackOverflow-lite-v2
 [![Build Status](https://travis-ci.org/joshNic/StackOverflow-lite-v2.svg?branch=challenge_3)](https://travis-ci.org/joshNic/StackOverflow-lite-v2)
 [![Coverage Status](https://coveralls.io/repos/github/joshNic/StackOverflow-lite-v2/badge.svg)](https://coveralls.io/github/joshNic/StackOverflow-lite-v2)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4f931552514a4a68b10f327f823ba033)](https://www.codacy.com/app/joshNic/StackOverflow-lite-v2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=joshNic/StackOverflow-lite-v2&amp;utm_campaign=Badge_Grade)
 - StackOverflow-lite is a platform where people can ask questions and provide answers.
 
 - This branch contains API endpoints for the above application and tests
