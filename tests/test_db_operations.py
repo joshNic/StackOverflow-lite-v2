@@ -76,8 +76,7 @@ def test_show_single_question(db_operations):
     assert db_operations.show_single_question(question_id) == None
     assert isinstance(db_operations.show_single_question(
         question_id), tuple) == False
-    assert len(db_operations.show_single_question(
-        question_id)) == 5
+    
     assert not isinstance(db_operations.show_single_question(
         question_id), list)
 
