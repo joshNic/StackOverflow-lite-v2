@@ -1,5 +1,5 @@
 # StackOverflow-lite-v2
-
+[![Build Status](https://travis-ci.org/joshNic/StackOverflow-lite-v2.svg?branch=challenge_3)](https://travis-ci.org/joshNic/StackOverflow-lite-v2)
 - StackOverflow-lite is a platform where people can ask questions and provide answers.
 
 - This branch contains API endpoints for the above application and tests
