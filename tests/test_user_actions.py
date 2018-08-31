@@ -91,4 +91,4 @@ def test_update_answer_user(user_actions):
 def test_fetch_single_answer(user_actions):
     answer_id = 5
     assert isinstance(user_actions.fetch_single_answer(answer_id), tuple) == False
-    assert len(user_actions.fetch_single_answer(answer_id)) == None
+    
