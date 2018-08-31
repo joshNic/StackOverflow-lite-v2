@@ -37,7 +37,7 @@ def test_post_question(
     make_response_post_question_invalid
 ):
     assert make_response_post_question.status_code == 401
-    assert make_response_post_question_token.status_code == 409
+    assert make_response_post_question_token.status_code == 201
     assert make_response_post_question_invalid.status_code == 400
 
 
@@ -53,7 +53,7 @@ def test_validate_answer_object(
     make_response_validate_answer, make_response_validate_answer_object
 ):
     assert make_response_validate_answer.status_code == 405
-    assert make_response_validate_answer_object.status_code == 400
+    assert make_response_validate_answer_object.status_code == 404
 
 
 def test_token_required(make_response_post_question, make_response_invalid_token):
@@ -69,24 +69,24 @@ def test_check_request(make_response_check_request, make_response_check_request_
 
 
 def test_delete_question(make_response_check_delete, make_response_check_update_valid_delete):
-    assert make_response_check_delete.status_code == 400
+    assert make_response_check_delete.status_code == 200
     assert make_response_check_update_valid_delete.status_code == 400
     # assert make_response_check_request_token.status_code == 400
 
 
 def test_update_question(make_response_check_update, make_response_check_update_valid,
                          make_response_check_update_valid_exists, make_response_check_update_validate):
-    assert make_response_check_update.status_code == 401
+    assert make_response_check_update.status_code == 404
     assert make_response_check_update_valid.status_code == 409
     assert make_response_check_update_valid_exists.status_code == 404
     assert make_response_check_update_validate.status_code == 400
 
 
 def test_post_answer(make_response_check_post_answer, make_response_check_post_answer_valid):
-    assert make_response_check_post_answer.status_code == 404
+    assert make_response_check_post_answer.status_code == 401
     assert make_response_check_post_answer_valid.status_code == 201
 
 
 def test_update_answer(make_response_check_update_answer_valid, make_response_check_update_answer_valid_response):
-    assert make_response_check_update_answer_valid.status_code == 201
+    assert make_response_check_update_answer_valid.status_code == 401
     assert make_response_check_update_answer_valid_response.status_code == 201
