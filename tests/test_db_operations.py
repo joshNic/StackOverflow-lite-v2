@@ -38,7 +38,7 @@ def test_fetch_user_name(db_operations):
 
 def test_fetch_user_by_id(db_operations):
     user_id = 5
-    assert db_operations.fetch_user_by_id(user_id)
+    assert db_operations.fetch_user_by_id(user_id) == None
     assert isinstance(db_operations.fetch_user_by_id(
         user_id), tuple)
     assert not isinstance(db_operations.fetch_user_by_id(
