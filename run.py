@@ -1,5 +1,8 @@
 from app.views import app
+from create_tables import create_tables
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    create_tables()
+    app.run()
+    
 
