@@ -38,10 +38,10 @@ def test_fetch_user_name(db_operations):
 
 def test_fetch_user_by_id(db_operations):
     user_id = 5
-    assert db_operations.fetch_user_by_id(user_id) == None
-    assert not isinstance(db_operations.fetch_user_by_id(
+    assert db_operations.fetch_user_by_id(user_id) != None
+    assert  isinstance(db_operations.fetch_user_by_id(
         user_id), tuple)
-    assert not isinstance(db_operations.fetch_user_by_id(
+    assert  not isinstance(db_operations.fetch_user_by_id(
         user_id), list)
 
 
@@ -73,9 +73,9 @@ def test_show_questions(db_operations):
 
 def test_show_single_question(db_operations):
     question_id = 5
-    assert db_operations.show_single_question(question_id) == None
+    assert db_operations.show_single_question(question_id) != None
     assert isinstance(db_operations.show_single_question(
-        question_id), tuple) == False
+        question_id), tuple) != False
     
     assert not isinstance(db_operations.show_single_question(
         question_id), list)
@@ -106,12 +106,12 @@ def test_update_answer_user(db_operations):
 def test_get_question_answers(db_operations):
     question_id = 5
     assert isinstance(db_operations.get_question_answers(question_id), list)
-    assert len(db_operations.get_question_answers(question_id)) == 0
+    assert len(db_operations.get_question_answers(question_id)) > 0
 
 
 def test_get_single_answer(db_operations):
     answer_id = 5
-    assert not  isinstance(db_operations.get_single_answer(answer_id), tuple)
+    assert  isinstance(db_operations.get_single_answer(answer_id), tuple)
     
 
 
