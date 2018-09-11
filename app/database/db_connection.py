@@ -9,7 +9,7 @@ class DbConnection:
         if os.getenv('APP_Config') == 'testing':
             self.database = 'postgrestest'
         else:
-            self.database = 'dl71kl016q7qc'
+            self.database = 'postgres'
     def connect(self,sql, *command):
         """ Connect to the PostgreSQL database server """
         try:
@@ -17,7 +17,7 @@ class DbConnection:
             # params = config(self.path, self.section)
             # connect to the PostgreSQL server
             self.conn = psycopg2.connect(
-                database=self.database, user="rqxoljondpygyq", password="859c79cc406ee2799982b5e28f4935ae69cc09842200211a43749c54e7df5087", host="ec2-54-235-86-226.compute-1.amazonaws.com", port="5432"
+                database=self.database, user="postgres", password="5y+2X=89", host="127.0.0.1", port="5432"
             )
             # create a cursor
             cur = self.conn.cursor()
