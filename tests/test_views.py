@@ -89,4 +89,4 @@ def test_post_answer(make_response_check_post_answer, make_response_check_post_a
 
 def test_update_answer(make_response_check_update_answer_valid, make_response_check_update_answer_valid_response):
     assert make_response_check_update_answer_valid.status_code == 401
-    assert make_response_check_update_answer_valid_response.status_code == 404
+    assert make_response_check_update_answer_valid_response.status_code == 401
