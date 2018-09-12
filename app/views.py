@@ -6,6 +6,7 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 import datetime
 from app import create_app
+from flask_cors import CORS
 import os
 from .models.user_actions import UserActions
 
@@ -13,6 +14,7 @@ user_actions_object = UserActions()
 
 app = create_app()
 app.config['SECRET_KEY'] = 'secret123'
+CORS(app)
 
 
 def token_required(f):
@@ -140,7 +142,7 @@ def get_all():
                 'question_body': result[3]
             }
             container.append(q_obj)
-        return jsonify({'All Questions': container}), 200
+        return jsonify(container), 200
     return jsonify({'messages': 'No questions on the platform yet'}), 200
 
 # get single questions endpoint
