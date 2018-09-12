@@ -6,7 +6,7 @@ from functools import wraps
 from werkzeug.security import check_password_hash
 import datetime
 from app import create_app
-from flask_cors import CORS
+# from flask_cors import CORS
 import os
 from .models.user_actions import UserActions
 
@@ -14,7 +14,7 @@ user_actions_object = UserActions()
 
 app = create_app()
 app.config['SECRET_KEY'] = 'secret123'
-CORS(app)
+# CORS(app)
 
 
 def token_required(f):
