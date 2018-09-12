@@ -4,7 +4,7 @@ import json
 
 def test_get_all(make_response_get_questions):
     assert make_response_get_questions.status_code == 200
-    assert  not isinstance(make_response_get_questions.json, list)
+    assert isinstance(make_response_get_questions.json, list)
 
 def test_get_single_question(make_response_get_questions):
     assert make_response_get_questions.status_code == 200
