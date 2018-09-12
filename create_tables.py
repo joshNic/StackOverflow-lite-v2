@@ -45,7 +45,7 @@ def create_tables():
         
         # connect to the PostgreSQL server
         conn = psycopg2.connect(
-            database='postgrestest', user="postgres", password="", host="127.0.0.1", port="5432"
+            database='dl71kl016q7qc', user="rqxoljondpygyq", password="859c79cc406ee2799982b5e28f4935ae69cc09842200211a43749c54e7df5087", host="ec2-54-235-86-226.compute-1.amazonaws.com", port="5432"
         )
         cur = conn.cursor()
         # create table one by one
@@ -62,5 +62,3 @@ def create_tables():
             conn.close()
 
 
-if __name__ == '__main__':
-    create_tables()
