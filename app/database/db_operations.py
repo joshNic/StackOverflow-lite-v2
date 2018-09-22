@@ -37,6 +37,11 @@ class DbOperations:
         query = self.db_connect.connect(sql, user_email)
         return query
     
+    def query_answers(self, answer_id):
+        sql = """SELECT * FROM answers WHERE answer_id=%s;"""
+        query = self.db_connect.connect(sql, answer_id)
+        return query.fetchone()
+    
     def fetch_question_title(self, question_title):
         fetc = self.query_title(question_title)
         return fetc.fetchone()
@@ -78,7 +83,18 @@ class DbOperations:
         return query
     
     def show_questions(self):
-        sql = """SELECT * FROM questions;"""
+        sql = """
+        SELECT
+         questions.*, users.user_email
+        FROM
+         questions 
+        LEFT JOIN
+         users
+        ON
+         questions.user_id=users.user_id
+        ORDER BY
+         questions.created_at DESC
+        """
         fetch = self.db_connect.connect(sql, None)
         query = fetch.fetchall()
         return query
@@ -111,11 +127,52 @@ class DbOperations:
         return self.db_connect.connect(sql, answer_id)
     
     def get_question_answers(self, question_id):
-        sql = """SELECT * FROM answers WHERE question_id=%s;"""
+        sql = """
+        SELECT
+         answers.*, users.user_email
+        FROM
+         answers 
+        LEFT JOIN
+         users
+        ON
+         answers.user_id=users.user_id
+        WHERE question_id=%s
+        ORDER BY
+         answers.created_at DESC;
+        """
         query = self.db_connect.connect(
             sql, question_id)
         fetch = query.fetchall()
         return fetch
+
+    def get_user_questions(self, user_id):
+        fetch = self.query_user_questions(user_id)
+        return fetch.fetchall()
+    
+    def get_user_question_number(self, user_id):
+        fetch = self.query_user_questions(user_id)
+        return fetch.rowcount
+    
+    def query_user_questions(self, user_id):
+        sql = """
+        SELECT
+         questions.question_id,questions.question_body,questions.question_title,count(answers.*) as answer_count
+        FROM
+         questions 
+        LEFT JOIN
+         answers
+        ON
+         questions.question_id=answers.question_id
+        WHERE
+         questions.user_id=%s
+        GROUP BY
+         questions.question_id
+        ORDER BY
+         answer_count DESC
+        """
+        query = self.db_connect.connect(
+            sql, user_id)
+        return query
     
     def get_single_answer(self, answer_id):
         sql = """SELECT * FROM answers WHERE answer_id=%s;"""
@@ -123,6 +180,38 @@ class DbOperations:
             sql, answer_id)
         fetch = query.fetchone()
         return fetch
+    
+    def get_total_answers(self, user_id):
+        sql = """
+        SELECT COALESCE(SUM(answer_count),0)
+            FROM
+            (
+            SELECT
+                questions.question_id,questions.question_body,questions.question_title,count(answers.*) as answer_count, users.user_id, users.user_email
+                FROM
+                    questions 
+                LEFT JOIN
+                    answers
+                ON
+                    questions.question_id=answers.question_id
+                LEFT JOIN
+                    users
+                ON
+                    questions.user_id=users.user_id
+                WHERE
+                    questions.user_id=%s
+                GROUP BY
+                    questions.question_id,
+                    users.user_id
+                ORDER BY
+                    answer_count DESC
+                ) t
+        """
+        query = self.db_connect.connect(
+            sql, user_id)
+        fetch = query.fetchone()[0]
+        return fetch
+
     
     def delete_answer(self, answer_id):
         sql = """DELETE  FROM answers WHERE answer_id=%s;"""

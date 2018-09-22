@@ -2,6 +2,9 @@ from flask import (
     Flask, jsonify, make_response, redirect, json, Response, request, abort
 )
 import jwt
+import time
+from datetime import date
+from decimal import Decimal
 from functools import wraps
 from werkzeug.security import check_password_hash
 import datetime
@@ -84,7 +87,7 @@ def login_user():
                 )
             }, app.config['SECRET_KEY']
         )
-        return jsonify({'token': token.decode('UTF-8')})
+        return jsonify({'token': token.decode('UTF-8')}), 200
     return make_response('unauthorized access', 401, {'WWW-Authenticate':
                                                       'Basic realm="Login required!"'})
 
@@ -98,9 +101,9 @@ def post_question(current_user):
         title = request.json['question_title']
         body = request.json['question_body']
         if len(title) < 6:
-            return jsonify({'error': 'question title too short'}), 400
+            return jsonify({'message': 'question title too short'}), 400
         elif title.isdigit():
-            return jsonify({'error': 'question can not contain only numbers'}), 400
+            return jsonify({'message': 'question can not contain only numbers'}), 400
 
         check_duplicate_title = user_actions_object.get_title(title)
         if check_duplicate_title > 0:
@@ -114,11 +117,11 @@ def post_question(current_user):
 
 def check_request():
     if not request.json:
-        return jsonify({'error': 'unsupported format'}), 400
+        return jsonify({'message': 'unsupported format'}), 400
     elif 'question_title' not in request.json:
-        return jsonify({'error': 'question title is requred'}), 400
+        return jsonify({'message': 'question title is requred'}), 400
     elif 'question_body' not in request.json:
-        return jsonify({'error': 'question body is required'}), 400
+        return jsonify({'message': 'question body is required'}), 400
 
 
 def check_answer_request():
@@ -135,15 +138,43 @@ def get_all():
     container = []
     if len(results) > 0:
         for result in results:
+            
             q_obj = {
                 'question_id': result[0],
                 'question_author_id': result[1],
                 'question_title': result[2],
-                'question_body': result[3]
+                'question_body': result[3],
+                'question_date': result[4].strftime("%A %d. %B %Y"),
+                'question_author': result[5]
             }
             container.append(q_obj)
         return jsonify(container), 200
-    return jsonify({'messages': 'No questions on the platform yet'}), 200
+    return jsonify({'message': 'No questions on the platform yet'}), 200
+
+# get all user questions endpoint
+
+
+@app.route('/api/v2/user/questions', methods=['GET'])
+@token_required
+def get_all_user_questions(current_user):
+    results = user_actions_object.get_user_questions(current_user)
+    result_count = user_actions_object.get_user_question_count(current_user)
+    user = user_actions_object.get_user_by_id(current_user)
+    answers = user_actions_object.get_user_answers_number(current_user)
+    container = []
+    containers = [{'count': result_count, 'user': user[1],
+                  'answers':json.dumps(Decimal(answers))}]
+    if len(results) > 0:
+        for result in results:
+            q_obj = {
+                'question_id': result[0],
+                'question_body': result[1],
+                'question_title': result[2],
+                'answer_count': result[3]
+            }
+            container.append(q_obj)
+        return jsonify({'message':container, 'details':containers}), 200
+    return jsonify({'message': 'No questions on the platform yet'}), 200
 
 # get single questions endpoint
 
@@ -161,7 +192,9 @@ def get_single_question(question_id):
                 'question_author_id': result[1],
                 'question_id': result[2],
                 'answer_body': result[3],
-                'answer_status': result[4]
+                'answer_status': result[4],
+                'answer_date': result[5].strftime("%A %d. %B %Y"),
+                'answer_author':result[6]
             }
             answer_container.append(a_obj)
         q_obj = {
@@ -175,6 +208,22 @@ def get_single_question(question_id):
         return jsonify(container), 200
     return jsonify({'message': 'Questions does not exist'}), 404
 
+
+@app.route('/api/v2/answer/<int:answer_id>', methods=['GET'])
+def get_single_answer(answer_id):
+    results = user_actions_object.view_single_answer(answer_id)
+    if results:
+        container = []
+        a_obj = {
+            'answer_id': results[0],
+            'question_author_id': results[1],
+            'question_id': results[2],
+            'answer_body': results[3],
+            'answer_status': results[4]
+        }
+        container.append(a_obj)
+        return jsonify(container), 200
+    return jsonify({'message': 'Answer does not exist'}), 404
 # update question endpoint
 
 
@@ -188,9 +237,9 @@ def update_question(current_user, question_id):
                 title = request.json['question_title']
                 body = request.json['question_body']
                 if len(title) < 6:
-                    return jsonify({'error': 'question title too short'}), 400
+                    return jsonify({'message': 'question title too short'}), 400
                 elif title.isdigit():
-                    return jsonify({'error': 'question can not contain only numbers'}), 400
+                    return jsonify({'message': 'question can not contain only numbers'}), 400
                 check_duplicate_title = user_actions_object.get_title(title)
                 if check_duplicate_title > 0:
                     return jsonify({'message': 'Sorry question of same title exists'}), 409
@@ -213,7 +262,7 @@ def delete_question(current_user, question_id):
         if get_one_question[1] == current_user:
             user_actions_object.delete_question(question_id)
             return jsonify({'message': 'Question successfully deleted'}), 200
-        return jsonify({'error': 'You are not the owner of the question'}), 401
+        return jsonify({'message': 'You are not the owner of the question'}), 401
     return jsonify({'message': 'question does not exist'}), 400
 
 # add answer endpoint
@@ -265,7 +314,7 @@ def upadte_answer(current_user, question_id, answer_id):
             else:
                 return jsonify({'message': 'Answer not Updated'}), 400
     except:
-        return jsonify({'error': 'Resource not found'}), 404
+        return jsonify({'message': 'Resource not found'}), 404
     return jsonify({'message': 'You are not the author of the question or the answer'}), 401
 
 
@@ -273,7 +322,7 @@ def validate_email(user_email):
     check_duplicate_email = user_actions_object.get_user(user_email)
 
     if check_duplicate_email > 0:
-        return jsonify({'message': 'Sorry user already exixts'}), 409
+        return jsonify({'error': 'Sorry user already exists'}), 409
     elif len(user_email) < 6:
         return jsonify({'error': 'Email can not be less than six\
             characters'}), 400

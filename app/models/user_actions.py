@@ -59,6 +59,10 @@ class UserActions:
     def view_single_question(self, question_id):
         fetch_question = self.databaseObject.show_single_question(question_id)
         return fetch_question
+    
+    def view_single_answer(self, answer_id):
+        fetch_answer = self.databaseObject.query_answers(answer_id)
+        return fetch_answer
 
     def update_question(self, question_title, question_body, question_id):
         update_question = self.databaseObject.upadte_question(
@@ -111,5 +115,17 @@ class UserActions:
 
     def get_title(self, question_title):
         fetch = self.databaseObject.question_title(question_title)
+        return fetch
+    
+    def get_user_questions(self, user_id):
+        fetch = self.databaseObject.get_user_questions(user_id)
+        return fetch
+    
+    def get_user_question_count(self, user_id):
+        fetch = self.databaseObject.get_user_question_number(user_id)
+        return fetch
+
+    def get_user_answers_number(self, user_id):
+        fetch = self.databaseObject.get_total_answers(user_id)
         return fetch
     
