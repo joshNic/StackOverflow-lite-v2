@@ -162,7 +162,8 @@ def get_all_user_questions(current_user):
     user = user_actions_object.get_user_by_id(current_user)
     answers = user_actions_object.get_user_answers_number(current_user)
     container = []
-    containers = [{'count': result_count, 'user': user[1]}]
+    containers = [{'count': result_count, 'user': user[1],
+                  'answers':json.dumps(Decimal(answers))}]
     if len(results) > 0:
         for result in results:
             q_obj = {
