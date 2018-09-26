@@ -154,7 +154,7 @@ def get_all():
 # get all user questions and answers endpoint
 
 
-@app.route('/api/v2/user/questions', methods=['GET'])
+@app.route('/api/v2/profile', methods=['GET'])
 @token_required
 def get_all_user_questions(current_user):
     results = user_actions_object.get_user_questions(current_user)

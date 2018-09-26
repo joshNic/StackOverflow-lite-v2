@@ -93,7 +93,7 @@ class DbOperations:
         ON
          questions.user_id=users.user_id
         ORDER BY
-         questions.created_at DESC
+         questions.created_at DESC;
         """
         fetch = self.db_connect.connect(sql, None)
         query = fetch.fetchall()
@@ -168,7 +168,7 @@ class DbOperations:
         GROUP BY
          questions.question_id
         ORDER BY
-         answer_count DESC
+         answer_count DESC;
         """
         query = self.db_connect.connect(
             sql, user_id)
@@ -205,7 +205,7 @@ class DbOperations:
                     users.user_id
                 ORDER BY
                     answer_count DESC
-                ) t
+                ) t;
         """
         query = self.db_connect.connect(
             sql, user_id)
