@@ -151,7 +151,7 @@ def get_all():
         return jsonify(container), 200
     return jsonify({'message': 'No questions on the platform yet'}), 200
 
-# get all user questions endpoint
+# get all user questions and answers endpoint
 
 
 @app.route('/api/v2/user/questions', methods=['GET'])
