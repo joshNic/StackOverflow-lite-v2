@@ -89,7 +89,7 @@ Response 201 (application/json)
 body
     {
         "question_id": {questionId},
-        "answer_body": "So i came across this and i dont know what it means"
+        "answer_body": "So i came across this and i dont know what it"
     }
 ```
 
